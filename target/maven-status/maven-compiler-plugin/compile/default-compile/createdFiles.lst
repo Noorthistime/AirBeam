@@ -1,0 +1,10 @@
+com\project\p2p\service\FileService.class
+com\project\p2p\config\StorageConfig.class
+com\project\p2p\model\FileChunk.class
+com\project\p2p\controller\FileController.class
+com\project\p2p\model\FileMetadata.class
+com\project\p2p\util\HashUtil.class
+com\project\p2p\util\FileChunkUtil.class
+com\project\p2p\repository\FileMetadataRepository.class
+com\project\p2p\P2pFileSharingApplication.class
+com\project\p2p\repository\FileChunkRepository.class
