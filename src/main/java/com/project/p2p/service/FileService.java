@@ -50,6 +50,15 @@ public class FileService {
 
     private final String[] peers = {"peer1", "peer2", "peer3"};
 
+    public UserAccount login(String requestedUserId) {
+        String normalizedUserId = normalizeUserId(requestedUserId);
+        if (normalizedUserId == null) {
+            throw new IllegalArgumentException("A user ID is required to login.");
+        }
+        return userRepo.findById(normalizedUserId)
+                .orElseThrow(() -> new IllegalArgumentException("User ID not found. Please sign up first."));
+    }
+
     public synchronized UserAccount signIn(String requestedUserId, String displayName) {
         String normalizedUserId = normalizeUserId(requestedUserId);
         if (normalizedUserId == null) {

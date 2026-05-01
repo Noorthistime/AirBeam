@@ -24,4 +24,10 @@ public class UserController {
         UserAccount user = fileService.signIn(request.getUserId(), request.getDisplayName());
         return ResponseEntity.ok(user);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserAccount> login(@RequestBody SignInRequest request) {
+        UserAccount user = fileService.login(request.getUserId());
+        return ResponseEntity.ok(user);
+    }
 }
