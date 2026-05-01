@@ -441,15 +441,32 @@
             .dashboard-header { flex-direction: column; align-items: flex-start; gap: 20px; }
         }
 
-        /* Removing harsh reds */
+        /* Removing harsh colors from danger buttons - making them theme-consistent */
         .btn-danger {
             background: transparent;
             border: 1px solid var(--line);
             color: var(--muted);
         }
         .btn-danger:hover {
-            background: rgba(0,0,0,0.05);
+            background: rgba(0,0,0,0.03);
+            border-color: var(--muted);
             color: var(--ink);
+        }
+
+        .share-tag button {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .share-tag button:hover {
+            color: var(--accent);
         }
     </style>
 </head>
