@@ -9,11 +9,29 @@ services:
     envVars:
       - key: PORT
         value: 8082
-      - key: DATABASE_URL
-        sync: false
-      - key: DATABASE_USERNAME
-        sync: false
-      - key: DATABASE_PASSWORD
-        sync: false
+      - key: DB_HOST
+        fromDatabase:
+          name: p2p-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: p2p-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: p2p-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: p2p-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: p2p-db
+          property: password
       - key: FILE_STORAGE_PATH
         value: storage/
+
+databases:
+  - name: p2p-db
+    plan: free
