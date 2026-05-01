@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: p2p-filesharing-internet-by-sm
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    autoDeployTrigger: commit
+    envVars:
+      - key: PORT
+        value: 8082
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: FILE_STORAGE_PATH
+        value: storage/

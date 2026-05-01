@@ -14,6 +14,7 @@ public class FileMetadata {
     private long fileSize;
     private int totalChunks;
     private LocalDateTime uploadTime;
+    private String ownerUserId;
 
     public Long getId() { return id; }
 
@@ -28,4 +29,7 @@ public class FileMetadata {
 
     public LocalDateTime getUploadTime() { return uploadTime; }
     public void setUploadTime(LocalDateTime uploadTime) { this.uploadTime = uploadTime; }
+
+    public String getOwnerUserId() { return ownerUserId; }
+    public void setOwnerUserId(String ownerUserId) { this.ownerUserId = ownerUserId; }
 }

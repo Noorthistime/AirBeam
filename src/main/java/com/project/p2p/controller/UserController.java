@@ -1,0 +1,27 @@
+package com.project.p2p.controller;
+
+import com.project.p2p.model.SignInRequest;
+import com.project.p2p.model.UserAccount;
+import com.project.p2p.service.FileService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/users")
+@CrossOrigin(origins = "*")
+public class UserController {
+
+    @Autowired
+    private FileService fileService;
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<UserAccount> signIn(@RequestBody SignInRequest request) {
+        UserAccount user = fileService.signIn(request.getUserId(), request.getDisplayName());
+        return ResponseEntity.ok(user);
+    }
+}
