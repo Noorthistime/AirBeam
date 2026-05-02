@@ -16,6 +16,7 @@ public class UserAccount {
     private String userId;
 
     private String displayName;
+    private String password;
     private LocalDateTime createdAt;
 
     public String getUserId() {
@@ -32,6 +33,14 @@ public class UserAccount {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public LocalDateTime getCreatedAt() {

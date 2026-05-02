@@ -50,16 +50,21 @@ public class FileService {
 
     private final String[] peers = {"peer1", "peer2", "peer3"};
 
-    public UserAccount login(String requestedUserId) {
+    public UserAccount login(String requestedUserId, String password) {
         String normalizedUserId = normalizeUserId(requestedUserId);
         if (normalizedUserId == null) {
             throw new IllegalArgumentException("A user ID is required to login.");
         }
-        return userRepo.findById(normalizedUserId)
+        UserAccount user = userRepo.findById(normalizedUserId)
                 .orElseThrow(() -> new IllegalArgumentException("User ID not found. Please sign up first."));
+        
+        if (user.getPassword() != null && !user.getPassword().equals(password)) {
+            throw new IllegalArgumentException("Incorrect password.");
+        }
+        return user;
     }
 
-    public synchronized UserAccount signIn(String requestedUserId, String displayName) {
+    public synchronized UserAccount signIn(String requestedUserId, String displayName, String password) {
         String normalizedUserId = normalizeUserId(requestedUserId);
         if (normalizedUserId == null) {
             normalizedUserId = generateNextUserId();
@@ -75,7 +80,20 @@ public class FileService {
 
         String normalizedName = normalizeDisplayName(displayName, finalUserId);
         user.setDisplayName(normalizedName);
+        user.setPassword(password);
         return userRepo.save(user);
+    }
+
+    public void changePassword(String userId, String currentPassword, String newPassword) {
+        UserAccount user = userRepo.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+        
+        if (user.getPassword() != null && !user.getPassword().equals(currentPassword)) {
+            throw new IllegalArgumentException("Incorrect current password.");
+        }
+        
+        user.setPassword(newPassword);
+        userRepo.save(user);
     }
 
     public UploadResponseDto uploadFile(MultipartFile file, String userId) throws Exception {
