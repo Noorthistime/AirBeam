@@ -18,6 +18,9 @@ public class UserAccount {
     private String displayName;
     private String password;
     private LocalDateTime createdAt;
+    
+    @Column(nullable = false)
+    private boolean admin = false;
 
     public String getUserId() {
         return userId;
@@ -49,5 +52,13 @@ public class UserAccount {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 }

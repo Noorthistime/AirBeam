@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+import java.util.Map;
 @RestController
 @RequestMapping("/users")
 @CrossOrigin(origins = "*")
@@ -38,5 +41,11 @@ public class UserController {
     public ResponseEntity<Map<String, String>> changePassword(@RequestBody PasswordChangeRequest request) {
         fileService.changePassword(request.getUserId(), request.getCurrentPassword(), request.getNewPassword());
         return ResponseEntity.ok(Map.of("message", "Password updated successfully."));
+    }
+
+    @GetMapping("/admin/users")
+    public ResponseEntity<List<UserAccount>> getAllUsers(@RequestParam String adminId) {
+        List<UserAccount> users = fileService.getAllUsers(adminId);
+        return ResponseEntity.ok(users);
     }
 }

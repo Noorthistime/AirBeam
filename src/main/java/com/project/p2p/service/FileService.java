@@ -75,6 +75,9 @@ public class FileService {
             UserAccount newUser = new UserAccount();
             newUser.setUserId(finalUserId);
             newUser.setCreatedAt(LocalDateTime.now());
+            if (userRepo.count() == 0) {
+                newUser.setAdmin(true);
+            }
             return newUser;
         });
 
@@ -397,5 +400,14 @@ public class FileService {
             return userId;
         }
         return displayName.trim();
+    }
+
+    public List<UserAccount> getAllUsers(String adminId) {
+        UserAccount admin = userRepo.findById(normalizeUserId(adminId))
+                .orElseThrow(() -> new IllegalArgumentException("Admin user not found."));
+        if (!admin.isAdmin()) {
+            throw new IllegalArgumentException("Unauthorized access.");
+        }
+        return userRepo.findAll();
     }
 }
