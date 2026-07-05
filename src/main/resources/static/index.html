@@ -17,24 +17,31 @@
             --panel-strong: rgba(255, 255, 255, 0.82);
             --ink: #0f172a;
             --muted: #475569;
-            --line: rgba(239, 68, 68, 0.12);
-            --border: rgba(239, 68, 68, 0.18);
-            --accent: #ef4444;
-            --accent-hover: #fca5a5;
+
+            /* Accent defaults: Nothing Red */
+            --accent: #e30000;
+            --accent-rgb: 227, 0, 0;
+            --accent-dark: #990000;
+            --accent-dark-rgb: 153, 0, 0;
+            --accent-hover: #ff4d4d;
+            --accent-light: #fee2e2;
+
+            --line: rgba(var(--accent-rgb), 0.12);
+            --border: rgba(var(--accent-rgb), 0.18);
             --destructive: #dc2626;
-            --shadow: 0 10px 40px -10px rgba(239, 68, 68, 0.12), 0 40px 100px rgba(239, 68, 68, 0.1);
-            --card-hover-shadow: 0 20px 50px -15px rgba(239, 68, 68, 0.18), 0 50px 120px rgba(239, 68, 68, 0.15);
+            --shadow: 0 10px 40px -10px rgba(var(--accent-rgb), 0.12), 0 40px 100px rgba(var(--accent-rgb), 0.1);
+            --card-hover-shadow: 0 20px 50px -15px rgba(var(--accent-rgb), 0.18), 0 50px 120px rgba(var(--accent-rgb), 0.15);
             --radius: 24px;
             --font-heading: 'Playfair Display', serif;
             --font-body: 'Inter', sans-serif;
-            --primary-gradient: linear-gradient(135deg, #ef4444, #991b1b);
-            --button-glow: 0 0 15px rgba(239, 68, 68, 0.25), 0 0 40px rgba(153, 27, 27, 0.15);
-            --button-glow-hover: 0 0 25px rgba(239, 68, 68, 0.35), 0 0 55px rgba(153, 27, 27, 0.25);
-            --focus-ring: 0 0 0 4px rgba(239, 68, 68, 0.25), 0 0 15px rgba(239, 68, 68, 0.15);
+            --primary-gradient: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            --button-glow: 0 0 15px rgba(var(--accent-rgb), 0.25), 0 0 40px rgba(var(--accent-dark-rgb), 0.15);
+            --button-glow-hover: 0 0 25px rgba(var(--accent-rgb), 0.35), 0 0 55px rgba(var(--accent-dark-rgb), 0.25);
+            --focus-ring: 0 0 0 4px rgba(var(--accent-rgb), 0.25), 0 0 15px rgba(var(--accent-rgb), 0.15);
             --card-bg: rgba(255, 255, 255, 0.55);
-            --card-border: rgba(239, 68, 68, 0.18);
+            --card-border: rgba(var(--accent-rgb), 0.18);
             --input-bg: rgba(255, 255, 255, 0.92);
-            --input-border: rgba(239, 68, 68, 0.25);
+            --input-border: rgba(var(--accent-rgb), 0.25);
             --text-soft: #334155;
         }
 
@@ -47,22 +54,53 @@
             --ink: oklch(0.985 0 0);
             --muted: rgba(255, 255, 255, 0.68);
             --line: rgba(255, 255, 255, 0.12);
-            --border: rgba(239, 68, 68, 0.22);
-            --accent: #ef4444;
-            --accent-hover: #fca5a5;
+            --border: rgba(var(--accent-rgb), 0.22);
             --destructive: #f87171;
-            --shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.6), 0 50px 120px rgba(0, 0, 0, 0.8), 0 0 30px rgba(239, 68, 68, 0.05);
-            --card-hover-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.8), 0 70px 150px rgba(0, 0, 0, 1), 0 0 50px rgba(239, 68, 68, 0.15);
+            --shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.6), 0 50px 120px rgba(0, 0, 0, 0.8), 0 0 30px rgba(var(--accent-rgb), 0.05);
+            --card-hover-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.8), 0 70px 150px rgba(0, 0, 0, 1), 0 0 50px rgba(var(--accent-rgb), 0.15);
             --radius: 24px;
-            --primary-gradient: linear-gradient(135deg, #ef4444, #991b1b);
-            --button-glow: 0 0 15px rgba(239, 68, 68, 0.25), 0 0 40px rgba(153, 27, 27, 0.15);
-            --button-glow-hover: 0 0 25px rgba(239, 68, 68, 0.35), 0 0 55px rgba(153, 27, 27, 0.25);
-            --focus-ring: 0 0 0 4px rgba(239, 68, 68, 0.25), 0 0 15px rgba(239, 68, 68, 0.15);
             --card-bg: rgba(28, 28, 34, 0.70);
             --card-border: rgba(255, 255, 255, 0.12);
             --input-bg: rgba(255, 255, 255, 0.08);
             --input-border: rgba(255, 255, 255, 0.18);
             --text-soft: rgba(255, 255, 255, 0.72);
+        }
+
+        /* Accent theme overrides */
+        html[data-accent="orange"] {
+            --accent: #f97316;
+            --accent-rgb: 249, 115, 22;
+            --accent-dark: #c2410c;
+            --accent-dark-rgb: 194, 65, 12;
+            --accent-hover: #fdba74;
+            --accent-light: #ffedd5;
+        }
+
+        html[data-accent="green"] {
+            --accent: #22c55e;
+            --accent-rgb: 34, 197, 94;
+            --accent-dark: #15803d;
+            --accent-dark-rgb: 21, 128, 61;
+            --accent-hover: #86efac;
+            --accent-light: #dcfce7;
+        }
+
+        html[data-accent="blue"] {
+            --accent: #0ea5e9;
+            --accent-rgb: 14, 165, 233;
+            --accent-dark: #0369a1;
+            --accent-dark-rgb: 3, 105, 161;
+            --accent-hover: #7dd3fc;
+            --accent-light: #e0f2fe;
+        }
+
+        html[data-accent="red"] {
+            --accent: #e30000;
+            --accent-rgb: 227, 0, 0;
+            --accent-dark: #990000;
+            --accent-dark-rgb: 153, 0, 0;
+            --accent-hover: #ff4d4d;
+            --accent-light: #fee2e2;
         }
 
         * {
@@ -93,8 +131,8 @@
             inset: 0;
             pointer-events: none;
             z-index: -2;
-            background: radial-gradient(circle at 10% 12%, rgba(239, 68, 68, 0.18), transparent 12%),
-                radial-gradient(circle at 90% 88%, rgba(153, 27, 27, 0.14), transparent 16%);
+            background: radial-gradient(circle at 10% 12%, rgba(var(--accent-rgb), 0.18), transparent 12%),
+                radial-gradient(circle at 90% 88%, rgba(var(--accent-dark-rgb), 0.14), transparent 16%);
             filter: blur(90px);
             opacity: 0.85;
         }
@@ -238,23 +276,23 @@
         }
 
         #authView::before {
-            background: radial-gradient(circle at 12% 15%, rgba(239, 68, 68, 0.20), transparent 14%),
-                radial-gradient(circle at 88% 88%, rgba(153, 27, 27, 0.18), transparent 18%);
+            background: radial-gradient(circle at 12% 15%, rgba(var(--accent-rgb), 0.20), transparent 14%),
+                radial-gradient(circle at 88% 88%, rgba(var(--accent-dark-rgb), 0.18), transparent 18%);
         }
 
         #appView::before {
-            background: radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.08), transparent 26%),
-                radial-gradient(circle at 50% 100%, rgba(153, 27, 27, 0.08), transparent 30%);
+            background: radial-gradient(circle at 50% 0%, rgba(var(--accent-rgb), 0.08), transparent 26%),
+                radial-gradient(circle at 50% 100%, rgba(var(--accent-dark-rgb), 0.08), transparent 30%);
         }
 
         html[data-theme="light"] #authView::before {
-            background: radial-gradient(circle at 12% 15%, rgba(239, 68, 68, 0.16), transparent 14%),
-                radial-gradient(circle at 88% 88%, rgba(153, 27, 27, 0.14), transparent 18%);
+            background: radial-gradient(circle at 12% 15%, rgba(var(--accent-rgb), 0.16), transparent 14%),
+                radial-gradient(circle at 88% 88%, rgba(var(--accent-dark-rgb), 0.14), transparent 18%);
         }
 
         html[data-theme="light"] #appView::before {
-            background: radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.06), transparent 26%),
-                radial-gradient(circle at 50% 100%, rgba(153, 27, 27, 0.06), transparent 30%);
+            background: radial-gradient(circle at 50% 0%, rgba(var(--accent-rgb), 0.06), transparent 26%),
+                radial-gradient(circle at 50% 100%, rgba(var(--accent-dark-rgb), 0.06), transparent 30%);
         }
 
         .landing-grid {
@@ -493,33 +531,34 @@
         }
 
         #profileBtn {
-            background: rgba(239, 68, 68, 0.18);
-            border-color: rgba(239, 68, 68, 0.35);
-            color: #fee2e2;
+            background: rgba(var(--accent-rgb), 0.18);
+            border-color: rgba(var(--accent-rgb), 0.35);
+            color: var(--accent-light);
         }
 
         html:not([data-theme="dark"]) #profileBtn {
-            background: rgba(239, 68, 68, 0.12);
-            border-color: rgba(239, 68, 68, 0.25);
-            color: #ef4444;
+            background: rgba(var(--accent-rgb), 0.12);
+            border-color: rgba(var(--accent-rgb), 0.25);
+            color: var(--accent);
         }
 
         #logoutBtn {
-            background: rgba(239, 68, 68, 0.18);
-            border-color: rgba(239, 68, 68, 0.35);
-            color: #fee2e2;
+            background: rgba(var(--accent-rgb), 0.18);
+            border-color: rgba(var(--accent-rgb), 0.35);
+            color: var(--accent-light);
         }
 
         html:not([data-theme="dark"]) #logoutBtn {
-            background: rgba(239, 68, 68, 0.12);
-            border-color: rgba(239, 68, 68, 0.25);
-            color: #ef4444;
+            background: rgba(var(--accent-rgb), 0.12);
+            border-color: rgba(var(--accent-rgb), 0.25);
+            color: var(--accent);
         }
 
-        html:not([data-theme="dark"]) #themeToggle {
-            background: rgba(239, 68, 68, 0.12);
-            border-color: rgba(239, 68, 68, 0.25);
-            color: #ef4444;
+        html:not([data-theme="dark"]) #themeToggle,
+        html:not([data-theme="dark"]) #accentToggle {
+            background: rgba(var(--accent-rgb), 0.12);
+            border-color: rgba(var(--accent-rgb), 0.25);
+            color: var(--accent);
         }
 
         .btn-circle {
@@ -533,13 +572,14 @@
             box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
         }
 
-        #themeToggle {
+        #themeToggle,
+        #accentToggle {
             width: 52px;
             height: 52px;
-            background: rgba(239, 68, 68, 0.18);
-            border-color: rgba(239, 68, 68, 0.35);
-            color: #fee2e2;
-            box-shadow: 0 18px 45px rgba(239, 68, 68, 0.16);
+            background: rgba(var(--accent-rgb), 0.18);
+            border-color: rgba(var(--accent-rgb), 0.35);
+            color: var(--accent-light);
+            box-shadow: 0 18px 45px rgba(var(--accent-rgb), 0.16);
         }
 
         html[data-theme="dark"] .btn-ghost {
@@ -636,13 +676,13 @@
 
         .file-item:hover {
             transform: translateY(-5px) scale(1.02);
-            border-color: rgba(15, 118, 110, 0.22);
-            box-shadow: 0 30px 85px rgba(15, 118, 110, 0.12);
+            border-color: rgba(var(--accent-rgb), 0.22);
+            box-shadow: 0 30px 85px rgba(var(--accent-rgb), 0.12);
         }
 
         html[data-theme="dark"] .file-item:hover {
-            border-color: rgba(239, 68, 68, 0.22);
-            box-shadow: 0 30px 85px rgba(239, 68, 68, 0.12);
+            border-color: rgba(var(--accent-rgb), 0.22);
+            box-shadow: 0 30px 85px rgba(var(--accent-rgb), 0.12);
         }
 
         .file-info {
@@ -674,15 +714,15 @@
         }
 
         .badge-owner {
-            background: rgba(239, 68, 68, 0.12);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.25);
+            background: rgba(var(--accent-rgb), 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(var(--accent-rgb), 0.25);
         }
 
         html:not([data-theme="dark"]) .badge-owner {
-            background: rgba(239, 68, 68, 0.12);
-            color: #ef4444;
-            border-color: rgba(239, 68, 68, 0.25);
+            background: rgba(var(--accent-rgb), 0.12);
+            color: var(--accent);
+            border-color: rgba(var(--accent-rgb), 0.25);
         }
 
         .badge-received {
@@ -845,6 +885,88 @@
                 box-shadow: var(--button-glow-hover);
             }
         }
+
+        /* Accent Color Selector UI */
+        .accent-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .accent-dropdown {
+            position: absolute;
+            top: calc(100% + 15px);
+            right: 0;
+            width: 190px;
+            z-index: 150;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(30px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            transform: translateY(10px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .accent-dropdown.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .accent-opt {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 10px 14px;
+            background: transparent;
+            border: none;
+            border-radius: 14px;
+            color: var(--ink);
+            text-align: left;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: background 0.2s ease, border-color 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .accent-opt:hover {
+            background: rgba(var(--accent-rgb), 0.06);
+        }
+
+        html[data-theme="dark"] .accent-opt:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .accent-opt.active {
+            background: rgba(var(--accent-rgb), 0.12);
+            border-color: rgba(var(--accent-rgb), 0.22);
+        }
+
+        html[data-theme="dark"] .accent-opt.active {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.14);
+        }
+
+        .accent-swatch {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+        }
+
+        html[data-theme="dark"] .accent-swatch {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
     </style>
 </head>
 
@@ -862,6 +984,29 @@
                 <span class="logo-text">AirBeam</span>
             </div>
             <div class="header-actions" style="position: relative;">
+                <div class="accent-selector">
+                    <button id="accentToggle" class="btn btn-circle" aria-label="Toggle accent selector" style="display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s ease, background 0.35s ease, border-color 0.35s ease;">
+                        <span style="width: 20px; height: 20px; border-radius: 50%; background: var(--accent); border: 2px solid var(--ink); box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.5); display: block; transition: background 0.3s ease;"></span>
+                    </button>
+                    <div id="accentDropdown" class="accent-dropdown">
+                        <button class="accent-opt" data-accent="red">
+                            <span class="accent-swatch" style="background: #e30000;"></span>
+                            Nothing Red
+                        </button>
+                        <button class="accent-opt" data-accent="orange">
+                            <span class="accent-swatch" style="background: #f97316;"></span>
+                            Warmer Orange
+                        </button>
+                        <button class="accent-opt" data-accent="green">
+                            <span class="accent-swatch" style="background: #22c55e;"></span>
+                            Forest Green
+                        </button>
+                        <button class="accent-opt" data-accent="blue">
+                            <span class="accent-swatch" style="background: #0ea5e9;"></span>
+                            Ocean Blue
+                        </button>
+                    </div>
+                </div>
                 <button id="themeToggle" class="btn btn-circle theme-toggle" aria-label="Toggle theme"><span
                         class="theme-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2">
@@ -1142,6 +1287,46 @@
         const changePasswordBtn = document.getElementById('changePasswordBtn');
         const passwordForm = document.getElementById('passwordForm');
         const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+
+        // Accent Theme Switching and Initialization
+        const accentToggle = document.getElementById('accentToggle');
+        const accentDropdown = document.getElementById('accentDropdown');
+        const accentOpts = document.querySelectorAll('.accent-opt');
+        let activeAccent = localStorage.getItem('nexusAccent') || 'red';
+
+        function applyAccent(acc) {
+            document.documentElement.dataset.accent = acc;
+            accentOpts.forEach(opt => {
+                if (opt.dataset.accent === acc) {
+                    opt.classList.add('active');
+                } else {
+                    opt.classList.remove('active');
+                }
+            });
+            localStorage.setItem('nexusAccent', acc);
+        }
+
+        accentToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            accentDropdown.classList.toggle('active');
+            profileCard.classList.add('hidden'); // auto-hide profile modal
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!accentDropdown.contains(e.target) && e.target !== accentToggle) {
+                accentDropdown.classList.remove('active');
+            }
+        });
+
+        accentOpts.forEach(opt => {
+            opt.addEventListener('click', () => {
+                const selectedAccent = opt.dataset.accent;
+                applyAccent(selectedAccent);
+                accentDropdown.classList.remove('active');
+            });
+        });
+
+        applyAccent(activeAccent);
 
         let user = JSON.parse(localStorage.getItem('nexusUser') || 'null');
         let theme = localStorage.getItem('nexusTheme') || 'light';
