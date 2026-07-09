@@ -9,4 +9,4 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/target/p2p-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8082
-CMD ["java", "-jar", "app.jar"]
+CMD ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
