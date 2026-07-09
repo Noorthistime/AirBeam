@@ -48,7 +48,7 @@ public class FileService {
     @Autowired
     private StorageConfig storageConfig;
 
-    private final String[] peers = {"peer1", "peer2", "peer3"};
+    private final String[] peers = { "peer1", "peer2", "peer3" };
 
     public UserAccount login(String requestedUserId, String password) {
         String normalizedUserId = normalizeUserId(requestedUserId);
@@ -57,7 +57,7 @@ public class FileService {
         }
         UserAccount user = userRepo.findById(normalizedUserId)
                 .orElseThrow(() -> new IllegalArgumentException("User ID not found. Please sign up first."));
-        
+
         if (user.getPassword() != null && !user.getPassword().equals(password)) {
             throw new IllegalArgumentException("Incorrect password.");
         }
@@ -90,11 +90,11 @@ public class FileService {
     public void changePassword(String userId, String currentPassword, String newPassword) {
         UserAccount user = userRepo.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
-        
+
         if (user.getPassword() != null && !user.getPassword().equals(currentPassword)) {
             throw new IllegalArgumentException("Incorrect current password.");
         }
-        
+
         user.setPassword(newPassword);
         userRepo.save(user);
     }
@@ -104,27 +104,20 @@ public class FileService {
         ensureUserExists(normalizedUserId);
 
         if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("No file was uploaded. Please provide a file with the form field name 'file'.");
+            throw new IllegalArgumentException(
+                    "No file was uploaded. Please provide a file with the form field name 'file'.");
         }
 
         String originalFilename = file.getOriginalFilename();
-        String suffix = ".tmp";
-        if (originalFilename != null && originalFilename.contains(".")) {
-            suffix = originalFilename.substring(originalFilename.lastIndexOf('.'));
-            if (suffix.length() < 3) {
-                suffix = ".tmp";
-            }
-        }
 
-        File tempFile = File.createTempFile("upload_", suffix);
-        file.transferTo(tempFile);
-
-        List<byte[]> chunks = FileChunkUtil.splitFile(tempFile);
+        long fileSize = file.getSize();
+        int chunkSize = 1024 * 1024; // 1MB
+        int totalChunks = fileSize == 0 ? 0 : (int) Math.ceil((double) fileSize / chunkSize);
 
         FileMetadata metadata = new FileMetadata();
-        metadata.setFileName(originalFilename != null ? originalFilename : tempFile.getName());
-        metadata.setFileSize(file.getSize());
-        metadata.setTotalChunks(chunks.size());
+        metadata.setFileName(originalFilename != null ? originalFilename : "uploaded_file");
+        metadata.setFileSize(fileSize);
+        metadata.setTotalChunks(totalChunks);
         metadata.setUploadTime(LocalDateTime.now());
         metadata.setOwnerUserId(normalizedUserId);
 
@@ -144,33 +137,46 @@ public class FileService {
         }
 
         Random random = new Random();
-        for (int i = 0; i < chunks.size(); i++) {
-            byte[] chunkData = chunks.get(i);
+        try (java.io.InputStream is = file.getInputStream()) {
+            byte[] buffer = new byte[chunkSize];
+            int bytesRead;
+            int chunkIndex = 0;
 
-            String peer = peers[random.nextInt(peers.length)];
-            File peerDir = new File(baseDir, peer);
-            if (!peerDir.exists() && !peerDir.mkdirs()) {
-                throw new IllegalStateException("Could not create peer storage directory: " + peerDir.getAbsolutePath());
+            while ((bytesRead = is.read(buffer)) != -1) {
+                byte[] chunkData;
+                if (bytesRead == chunkSize) {
+                    chunkData = buffer;
+                } else {
+                    chunkData = new byte[bytesRead];
+                    System.arraycopy(buffer, 0, chunkData, 0, bytesRead);
+                }
+
+                String peer = peers[random.nextInt(peers.length)];
+                File peerDir = new File(baseDir, peer);
+                if (!peerDir.exists() && !peerDir.mkdirs()) {
+                    throw new IllegalStateException(
+                            "Could not create peer storage directory: " + peerDir.getAbsolutePath());
+                }
+
+                File chunkFile = new File(peerDir, "chunk_" + metadata.getId() + "_" + chunkIndex);
+                try (FileOutputStream fos = new FileOutputStream(chunkFile)) {
+                    fos.write(chunkData);
+                }
+
+                FileChunk chunk = new FileChunk();
+                chunk.setFileId(metadata.getId());
+                chunk.setChunkIndex(chunkIndex);
+                chunk.setChunkPath(chunkFile.getAbsolutePath());
+                chunk.setHash(HashUtil.generateHash(chunkData));
+
+                chunkRepo.save(chunk);
+                chunkIndex++;
             }
-
-            File chunkFile = new File(peerDir, "chunk_" + metadata.getId() + "_" + i);
-            try (FileOutputStream fos = new FileOutputStream(chunkFile)) {
-                fos.write(chunkData);
-            }
-
-            FileChunk chunk = new FileChunk();
-            chunk.setFileId(metadata.getId());
-            chunk.setChunkIndex(i);
-            chunk.setChunkPath(chunkFile.getAbsolutePath());
-            chunk.setHash(HashUtil.generateHash(chunkData));
-
-            chunkRepo.save(chunk);
         }
 
-        tempFile.delete();
-
         String downloadUrl = "/file/download/" + metadata.getId();
-        return new UploadResponseDto(metadata.getId(), metadata.getFileName(), metadata.getFileSize(), downloadUrl, "File uploaded successfully");
+        return new UploadResponseDto(metadata.getId(), metadata.getFileName(), metadata.getFileSize(), downloadUrl,
+                "File uploaded successfully");
     }
 
     public FileShare shareFile(Long fileId, String ownerUserId, String sharedWithUserId) {
@@ -178,7 +184,8 @@ public class FileService {
         String normalizedSharedWithId = requireUserId(sharedWithUserId);
 
         if (normalizedOwnerId.equals(normalizedSharedWithId)) {
-            throw new IllegalArgumentException("You already own this file, so there is no need to share it with yourself.");
+            throw new IllegalArgumentException(
+                    "You already own this file, so there is no need to share it with yourself.");
         }
 
         ensureUserExists(normalizedOwnerId);
@@ -270,7 +277,8 @@ public class FileService {
 
         for (FileShare share : shareRepo.findBySharedWithUserIdOrderBySharedAtDesc(normalizedUserId)) {
             metadataRepo.findById(share.getFileId())
-                    .ifPresent(metadata -> files.putIfAbsent(metadata.getId(), toFileAccessDto(metadata, normalizedUserId)));
+                    .ifPresent(metadata -> files.putIfAbsent(metadata.getId(),
+                            toFileAccessDto(metadata, normalizedUserId)));
         }
 
         return new ArrayList<>(files.values());
@@ -302,10 +310,12 @@ public class FileService {
 
         File mergedDir = new File(baseStoragePath, "merged");
         if (!mergedDir.exists() && !mergedDir.mkdirs()) {
-            throw new IllegalStateException("Could not create merged storage directory: " + mergedDir.getAbsolutePath());
+            throw new IllegalStateException(
+                    "Could not create merged storage directory: " + mergedDir.getAbsolutePath());
         }
 
-        String safeFileName = metadata.getFileName() != null ? metadata.getFileName().replaceAll("[^a-zA-Z0-9._-]", "_") : "file_" + fileId;
+        String safeFileName = metadata.getFileName() != null ? metadata.getFileName().replaceAll("[^a-zA-Z0-9._-]", "_")
+                : "file_" + fileId;
         File outputFile = new File(mergedDir, fileId + "_" + safeFileName);
 
         try (FileOutputStream fos = new FileOutputStream(outputFile)) {
@@ -341,12 +351,12 @@ public class FileService {
                 ownerName,
                 userId.equals(metadata.getOwnerUserId()),
                 "/file/download/" + metadata.getId() + "?userId=" + userId,
-                sharedUsers
-        );
+                sharedUsers);
     }
 
     private boolean canAccess(FileMetadata metadata, String userId) {
-        return userId.equals(metadata.getOwnerUserId()) || shareRepo.existsByFileIdAndSharedWithUserId(metadata.getId(), userId);
+        return userId.equals(metadata.getOwnerUserId())
+                || shareRepo.existsByFileIdAndSharedWithUserId(metadata.getId(), userId);
     }
 
     private void ensureUserExists(String userId) {
