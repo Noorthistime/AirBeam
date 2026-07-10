@@ -43,6 +43,18 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "Password updated successfully."));
     }
 
+    @PostMapping("/delete-account")
+    public ResponseEntity<Map<String, String>> deleteAccount(@RequestParam String userId) {
+        fileService.deleteAccount(userId);
+        return ResponseEntity.ok(Map.of("message", "Account deleted successfully."));
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<Map<String, Boolean>> checkStatus(@RequestParam String userId) {
+        boolean exists = fileService.userExists(userId);
+        return ResponseEntity.ok(Map.of("active", exists));
+    }
+
     @GetMapping("/admin/users")
     public ResponseEntity<List<UserAccount>> getAllUsers(@RequestParam String adminId) {
         List<UserAccount> users = fileService.getAllUsers(adminId);

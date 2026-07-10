@@ -99,6 +99,30 @@ public class FileService {
         userRepo.save(user);
     }
 
+    @Transactional
+    public void deleteAccount(String userId) {
+        String normalizedUserId = requireUserId(userId);
+        UserAccount user = userRepo.findById(normalizedUserId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+
+        if ("ID-1".equalsIgnoreCase(normalizedUserId)) {
+            throw new IllegalArgumentException("Admin account cannot be deleted.");
+        }
+
+        List<FileMetadata> userFiles = metadataRepo.findByOwnerUserIdOrderByUploadTimeDesc(normalizedUserId);
+        for (FileMetadata file : userFiles) {
+            deleteOwnedFile(file.getId(), normalizedUserId);
+        }
+
+        userRepo.delete(user);
+    }
+
+    public boolean userExists(String userId) {
+        String normalizedUserId = normalizeUserId(userId);
+        if (normalizedUserId == null) return false;
+        return userRepo.existsById(normalizedUserId);
+    }
+
     public UploadResponseDto uploadFile(MultipartFile file, String userId) throws Exception {
         String normalizedUserId = requireUserId(userId);
         ensureUserExists(normalizedUserId);

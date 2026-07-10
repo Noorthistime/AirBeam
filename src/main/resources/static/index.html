@@ -1042,6 +1042,7 @@
                             Panel</button>
                         <button id="logoutBtn" class="btn btn-danger" style="display: none; width: 100%;">Sign
                             Out</button>
+                        <button id="deleteAccountBtn" class="btn btn-danger" style="display: none; width: 100%;">Delete your account</button>
                     </div>
                     <form id="passwordForm" class="hidden" style="margin-top:16px; display:grid; gap:12px;">
                         <label for="currentPassword">Current Password</label>
@@ -1111,6 +1112,9 @@
                                 <th
                                     style="padding: 12px 16px; font-weight: 600; font-size: 0.9rem; color: var(--muted);">
                                     Password</th>
+                                <th
+                                    style="padding: 12px 16px; font-weight: 600; font-size: 0.9rem; color: var(--muted);">
+                                    Action</th>
                             </tr>
                         </thead>
                         <tbody id="adminUsersList">
@@ -1126,8 +1130,8 @@
             style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
             <div class="card"
                 style="width: 90%; max-width: 400px; text-align: center; transform: translateY(20px); transition: transform 0.3s ease; display: flex; flex-direction: column; gap: 15px;">
-                <h3 style="margin: 0;">Confirm Removal</h3>
-                <p style="color: var(--muted); margin: 0; font-size: 0.95rem;">Are you sure you want to remove this
+                <h3 id="confirmModalTitle" style="margin: 0;">Confirm Removal</h3>
+                <p id="confirmModalMessage" style="color: var(--muted); margin: 0; font-size: 0.95rem;">Are you sure you want to remove this
                     uploaded item from the AirBeam website? This action cannot be undone.</p>
                 <div style="display: flex; gap: 12px; justify-content: center; margin-top: 10px;">
                     <button id="cancelConfirmBtn" class="btn btn-ghost" style="flex: 1;">Cancel</button>
@@ -1428,10 +1432,45 @@
             return data;
         }
 
+        let sessionPolling = null;
+        function stopPolling() {
+            if (sessionPolling) clearInterval(sessionPolling);
+        }
+        function startPolling() {
+            stopPolling();
+            sessionPolling = setInterval(async () => {
+                if (!user) return stopPolling();
+                try {
+                    const res = await fetch(`/users/status?userId=${user.userId}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (!data.active) {
+                            stopPolling();
+                            alert("Your account has been Terminated");
+                            user = null;
+                            localStorage.removeItem('nexusUser');
+                            showView(false);
+                        }
+                    }
+                } catch (e) { }
+            }, 3000);
+        }
+
         function showView(isApp) {
+            if (isApp) {
+                startPolling();
+            } else {
+                stopPolling();
+            }
             authView.classList.toggle('active', !isApp);
             appView.classList.toggle('active', isApp);
             logoutBtn.style.display = isApp ? 'block' : 'none';
+            const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+            if (isApp && user && user.userId !== 'ID-1') {
+                deleteAccountBtn.style.display = 'block';
+            } else {
+                deleteAccountBtn.style.display = 'none';
+            }
             profileBtn.style.display = isApp ? 'inline-flex' : 'none';
             if (isApp) {
                 profileBtn.textContent = (user.displayName || 'U').charAt(0).toUpperCase();
@@ -1521,9 +1560,25 @@
         });
 
         logoutBtn.addEventListener('click', () => {
+            stopPolling();
             user = null;
             localStorage.removeItem('nexusUser');
             showView(false);
+        });
+
+        document.getElementById('deleteAccountBtn').addEventListener('click', async () => {
+            const confirmed = await showConfirmModal('Delete Account', 'Are you sure you want to delete your account? This will erase your ID and password and cannot be undone.', 'Delete');
+            if (confirmed) {
+                stopPolling();
+                try {
+                    await fetch(`/users/delete-account?userId=${user.userId}`, { method: 'POST' });
+                } catch (err) {
+                    console.error('Account deletion error', err);
+                }
+                user = null;
+                localStorage.removeItem('nexusUser');
+                showView(false);
+            }
         });
 
         function showMsg(id, text, isErr = false) {
@@ -1675,12 +1730,18 @@
             }
         };
 
-        function showConfirmModal() {
+        function showConfirmModal(title = 'Confirm Removal', message = 'Are you sure you want to remove this uploaded item from the AirBeam website? This action cannot be undone.', confirmText = 'Remove') {
             return new Promise((resolve) => {
                 const overlay = document.getElementById('confirmModalOverlay');
                 const modal = overlay.querySelector('.card');
                 const acceptBtn = document.getElementById('acceptConfirmBtn');
                 const cancelBtn = document.getElementById('cancelConfirmBtn');
+                
+                const titleEl = document.getElementById('confirmModalTitle');
+                if (titleEl) titleEl.textContent = title;
+                const messageEl = document.getElementById('confirmModalMessage');
+                if (messageEl) messageEl.textContent = message;
+                if (acceptBtn) acceptBtn.textContent = confirmText;
 
                 overlay.classList.remove('hidden');
                 // Trigger reflow for transition
@@ -1746,6 +1807,9 @@
                         <td style="padding: 12px 16px; font-size: 0.95rem;">${u.userId}</td>
                         <td style="padding: 12px 16px; font-size: 0.95rem;">${u.displayName || '-'}</td>
                         <td style="padding: 12px 16px; font-size: 0.95rem; font-family: monospace;">${u.password || '-'}</td>
+                        <td style="padding: 12px 16px;">
+                            ${u.userId !== 'ID-1' ? `<button class="btn btn-danger btn-sm" onclick="adminDeleteUser('${u.userId}')">Delete</button>` : ''}
+                        </td>
                     </tr>
                 `).join('');
             } catch (err) {
@@ -1753,6 +1817,18 @@
                 alert('Could not load users for Admin Dashboard.');
             }
         }
+
+        window.adminDeleteUser = async (targetUserId) => {
+            const confirmed = await showConfirmModal('Terminate Account', `Are you sure you want to terminate ${targetUserId}?`, 'Terminate');
+            if (!confirmed) return;
+            try {
+                const res = await fetch(`/users/delete-account?userId=${targetUserId}`, { method: 'POST' });
+                if (!res.ok) throw new Error('Failed to delete account');
+                loadAdminUsers();
+            } catch (err) {
+                alert(err.message);
+            }
+        };
 
         adminDashboardBtn.addEventListener('click', () => {
             profileCard.classList.add('hidden');
