@@ -967,6 +967,80 @@
         html[data-theme="dark"] .accent-swatch {
             border-color: rgba(255, 255, 255, 0.15);
         }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .page {
+                padding: 20px 16px 60px;
+                gap: 24px;
+            }
+            header {
+                padding: 14px 16px;
+                border-radius: 24px;
+            }
+            .logo {
+                font-size: 1.4rem;
+                gap: 10px;
+            }
+            .logo-icon {
+                width: 36px;
+                height: 36px;
+            }
+            .header-actions {
+                gap: 10px;
+            }
+            .theme-toggle, .btn-circle {
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+            }
+            #themeToggle, #accentToggle {
+                width: 42px;
+                height: 42px;
+            }
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .auth-panel, .card {
+                padding: 20px;
+            }
+            .dashboard-header h2 {
+                font-size: 1.8rem;
+            }
+            .user-info {
+                width: 100%;
+                text-align: left;
+                padding: 14px 18px;
+            }
+            #profileCard {
+                width: calc(100vw - 32px);
+                max-width: 320px;
+                right: -10px;
+            }
+            .file-item {
+                padding: 16px;
+                gap: 14px;
+            }
+            .file-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .file-actions {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+            .custom-file-dropzone {
+                padding: 24px 16px;
+            }
+            #adminPanelOverlay .card {
+                padding: 20px 16px;
+            }
+            #adminPanelOverlay .card > div[style*="overflow: hidden"] {
+                overflow-x: auto !important;
+            }
+        }
     </style>
 </head>
 
