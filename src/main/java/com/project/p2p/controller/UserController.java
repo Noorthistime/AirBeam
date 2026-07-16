@@ -60,4 +60,10 @@ public class UserController {
         List<UserAccount> users = fileService.getAllUsers(adminId);
         return ResponseEntity.ok(users);
     }
+
+    @PostMapping("/toggle-receive")
+    public ResponseEntity<Map<String, Boolean>> toggleReceive(@RequestParam String userId, @RequestParam boolean enabled) {
+        boolean status = fileService.toggleReceiving(userId, enabled);
+        return ResponseEntity.ok(Map.of("receivingEnabled", status));
+    }
 }

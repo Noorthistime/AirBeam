@@ -123,6 +123,15 @@ public class FileService {
         return userRepo.existsById(normalizedUserId);
     }
 
+    public boolean toggleReceiving(String userId, boolean enabled) {
+        String normalizedUserId = requireUserId(userId);
+        UserAccount user = userRepo.findById(normalizedUserId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+        user.setReceivingEnabled(enabled);
+        userRepo.save(user);
+        return enabled;
+    }
+
     public UploadResponseDto uploadFile(MultipartFile file, String userId) throws Exception {
         String normalizedUserId = requireUserId(userId);
         ensureUserExists(normalizedUserId);
@@ -213,7 +222,13 @@ public class FileService {
         }
 
         ensureUserExists(normalizedOwnerId);
-        ensureUserExists(normalizedSharedWithId);
+        
+        UserAccount sharedWithUser = userRepo.findById(normalizedSharedWithId)
+                .orElseThrow(() -> new IllegalArgumentException("User ID does not exist: " + normalizedSharedWithId));
+
+        if (!sharedWithUser.isReceivingEnabled()) {
+            throw new IllegalArgumentException("This user has turned off receiving shared files.");
+        }
 
         FileMetadata metadata = metadataRepo.findById(fileId)
                 .orElseThrow(() -> new IllegalArgumentException("File not found for ID: " + fileId));
@@ -414,19 +429,23 @@ public class FileService {
     }
 
     private String generateNextUserId() {
-        int highestId = userRepo.findAll().stream()
+        java.util.List<Integer> existingIds = userRepo.findAll().stream()
                 .map(UserAccount::getUserId)
                 .filter(userId -> userId != null && userId.matches("(?i)^id-\\d+$"))
-                .mapToInt(userId -> Integer.parseInt(userId.substring(userId.indexOf("-") + 1)))
-                .max()
-                .orElse(0);
+                .map(userId -> Integer.parseInt(userId.substring(userId.indexOf("-") + 1)))
+                .sorted()
+                .toList();
 
-        String nextUserId;
-        do {
-            highestId++;
-            nextUserId = "ID-" + highestId;
-        } while (userRepo.existsById(nextUserId));
-        return nextUserId;
+        int nextId = 1;
+        for (int id : existingIds) {
+            if (id == nextId) {
+                nextId++;
+            } else if (id > nextId) {
+                break;
+            }
+        }
+        
+        return "ID-" + nextId;
     }
 
     private String normalizeDisplayName(String displayName, String userId) {

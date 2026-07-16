@@ -22,6 +22,9 @@ public class UserAccount {
     @Column(nullable = false)
     private boolean admin = false;
 
+    @Column(nullable = false)
+    private boolean receivingEnabled = true;
+
     public String getUserId() {
         return userId;
     }
@@ -60,5 +63,13 @@ public class UserAccount {
 
     public void setAdmin(boolean admin) {
         this.admin = admin;
+    }
+
+    public boolean isReceivingEnabled() {
+        return receivingEnabled;
+    }
+
+    public void setReceivingEnabled(boolean receivingEnabled) {
+        this.receivingEnabled = receivingEnabled;
     }
 }
