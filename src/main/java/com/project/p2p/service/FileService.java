@@ -226,10 +226,6 @@ public class FileService {
         UserAccount sharedWithUser = userRepo.findById(normalizedSharedWithId)
                 .orElseThrow(() -> new IllegalArgumentException("User ID does not exist: " + normalizedSharedWithId));
 
-        if (!sharedWithUser.isReceivingEnabled()) {
-            throw new IllegalArgumentException("This user has turned off receiving shared files.");
-        }
-
         FileMetadata metadata = metadataRepo.findById(fileId)
                 .orElseThrow(() -> new IllegalArgumentException("File not found for ID: " + fileId));
 
