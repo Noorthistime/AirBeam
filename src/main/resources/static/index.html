@@ -1025,14 +1025,20 @@
             }
 
             #profileCard {
-                width: calc(100vw - 32px);
-                max-width: 320px;
-                right: -10px;
+                position: fixed !important;
+                top: 80px !important;
+                right: 16px !important;
+                left: 16px !important;
+                width: auto !important;
+                max-width: none !important;
+                z-index: 1001;
             }
 
             .file-item {
                 padding: 16px;
                 gap: 14px;
+                flex-direction: column;
+                align-items: stretch;
             }
 
             .file-info {
@@ -1043,8 +1049,24 @@
 
             .file-actions {
                 width: 100%;
-                justify-content: flex-start;
-                flex-wrap: wrap;
+                display: flex;
+                gap: 8px;
+                justify-content: stretch;
+            }
+
+            .file-actions > * {
+                flex: 1;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .share-input-group.active {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .share-input-group.active button {
+                width: 100%;
             }
 
             .custom-file-dropzone {
@@ -1052,6 +1074,9 @@
             }
 
             #adminPanelOverlay .card {
+                width: 95% !important;
+                max-width: none !important;
+                margin: 10px;
                 padding: 20px 16px;
             }
 
