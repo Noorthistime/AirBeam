@@ -1,152 +1,196 @@
-AirBeam
+# AirBeam
 A full-stack peer-to-peer (P2P) file sharing web application allowing users to share, manage, and download files securely using Java Spring Boot, PostgreSQL, and modern web frontend technologies.
 
-Project Structure
+## Project Structure
+
+```text
 AirBeam/
 ├── src/main/
 │   ├── java/com/project/p2p/
-│   │   ├── controller/         # REST API Controllers
+│   │   ├── controller/                 # REST API Controllers
 │   │   │   ├── UserController.java
 │   │   │   └── FileController.java
-│   │   ├── service/            # Business Logic Layer
+│   │   ├── service/                    # Business Logic Layer
 │   │   │   ├── FileService.java
 │   │   │   └── UserService.java
-│   │   ├── model/              # Entity Classes & DTOs
+│   │   ├── model/                      # Entity Classes & DTOs
 │   │   │   ├── UserAccount.java
 │   │   │   └── FileMetadata.java
-│   │   ├── repository/         # Data Access Objects (Spring Data JPA)
+│   │   ├── repository/                 # Data Access Objects (Spring Data JPA)
 │   │   │   └── UserRepository.java
-│   │   └── P2pApplication.java # Spring Boot Main Class
+│   │   └── P2pApplication.java         # Spring Boot Main Class
 │   └── resources/
-│       ├── static/             # Frontend Assets (HTML, CSS, JS)
-│       │   ├── index.html      # Main Single Page Application UI
-│       │   ├── css/            # Stylesheets
-│       │   └── js/             # Frontend Logic
+│       ├── static/                     # Frontend Assets (HTML, CSS, JS)
+│       │   ├── index.html              # Main Single Page Application UI
+│       │   ├── css/                    # Stylesheets
+│       │   └── js/                     # Frontend Logic
 │       ├── application.properties      # Development Configs
 │       └── application-prod.properties # Production Configs
-├── storage/                    # Local storage for P2P shared chunks
-├── pom.xml                     # Maven configuration
-└── README.md                   # Project Documentation
+├── storage/                            # Local storage for P2P shared chunks
+├── pom.xml                             # Maven configuration
+└── README.md                           # Project Documentation
+```
 
-Features
-1. User Management
-User registration with validation
-Secure login with session management
-User profile management and profile customization
-Admin dashboard for user administration (terminate accounts)
-Logout functionality
-2. Peer-to-Peer File Sharing
-Upload and share files securely to connected peers
-Receive shared files dynamically
-Wanna Receive? toggle to enable/disable incoming files
-View shared files in the network
-3. Storage & Inventory
-Real-time tracking of file storage
-Chunked file handling and merging
-Delete specific files from the network
-4. Admin Capabilities
-Admin control panel
-Monitor all registered users
-Terminate user sessions or accounts remotely
-Dynamic polling for account status changes
+## Features
 
-Technologies Used
-Backend: Java Spring Boot
-Database: PostgreSQL
-Build Tool: Maven
-Web Server: Embedded Tomcat
-Frontend: HTML5, CSS3, Vanilla JavaScript
+### 1. User Management
+- User registration with validation
+- Secure login with session management
+- User profile management and customization
+- Admin dashboard for user administration
+- Logout functionality
 
-Database Setup
-Prerequisites
-PostgreSQL Server
-Java 17 or higher
-Maven 3.6+
+### 2. Peer-to-Peer File Sharing
+- Upload and share files securely across connected peers
+- Receive shared files dynamically in real-time
+- "Wanna Receive?" toggle to enable or disable incoming files
+- View shared files across the network
 
-Installation Steps
-Database Configuration
-Edit src/main/resources/application.properties
-Update PostgreSQL connection details:
-spring.datasource.url=jdbc:postgresql://<your-db-host>/airbeam
-spring.datasource.username=<your_username>
-spring.datasource.password=<your_password>
+### 3. Storage & File Management
+- Real-time tracking of file storage and chunks
+- Chunked file upload and automated merging
+- Delete specific shared files from the network
+- Instant availability updates
 
-Building the Project
-Using Maven
-# Clean and build
+### 4. Admin Control & Session Management
+- Comprehensive Admin Control Panel
+- Monitor all registered user accounts
+- Terminate user accounts remotely with instant notification
+- Real-time polling for user session status changes
+
+## Technologies Used
+- **Backend:** Java Spring Boot
+- **Database:** PostgreSQL
+- **Build Tool:** Maven
+- **Web Server:** Embedded Apache Tomcat
+- **Frontend:** HTML5, CSS3, Vanilla JavaScript
+
+## Database Setup
+
+### Prerequisites
+- PostgreSQL Server (12.0+)
+- Java 17 or higher
+- Maven 3.6+
+
+### Installation Steps
+
+#### 1. Create Database
+```bash
+psql -u postgres
+CREATE DATABASE airbeam;
+```
+
+#### 2. Database Configuration
+Edit `src/main/resources/application.properties` and update your PostgreSQL connection details:
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/airbeam
+spring.datasource.username=postgres
+spring.datasource.password=your_password
+```
+
+## Building the Project
+
+### Using Maven
+```bash
+# Clean and build the project
 mvn clean install
 
-# Package as JAR
+# Package as executable JAR
 mvn package
+```
 
-Running the Application
-Start PostgreSQL Database
-Run the Spring Boot application
-mvn spring-boot:run
-Access the application
-http://localhost:8082/
+## Running the Application
 
-Default Login Credentials
-Please register a new account on the start screen.
+1. Start your PostgreSQL Server
+2. Run the Spring Boot application:
+   ```bash
+   mvn spring-boot:run
+   ```
+3. Access the application in your browser:
+   ```text
+   http://localhost:8082/
+   ```
 
-API Endpoints
-Authentication & Users
-POST /api/users/register - Process registration
-POST /api/users/login - Process login
-POST /api/users/delete-account - Admin/User account deletion
-GET /api/users/status - Check user active status
-Files & P2P
-POST /api/files/upload - Upload file chunks
-GET /api/files/list - View available files
-DELETE /api/files/remove - Delete shared file
+## Default Login Credentials
+- Please register a new user account on the home screen to begin.
+- Admin access can be assigned via the database `admin` column.
 
-Database Tables
-user_accounts
-user_id (Primary Key)
-display_name
-password
-admin (Boolean)
-created_at
+## API Endpoints
 
-Security Features
-Session-based authentication
-SQL injection prevention (Spring Data JPA)
-Input validation
-Real-time account termination enforcement
+### Authentication & Users
+- `POST /api/users/register` - Process new account registration
+- `POST /api/users/login` - Process login and create session
+- `POST /api/users/delete-account` - Terminate user account (Admin/User)
+- `GET /api/users/status` - Check active session status
 
-Future Enhancements
-Password encryption (BCrypt)
-WebRTC integration for direct peer transfers
-Advanced reporting and statistics for Admins
-Mobile responsive UI enhancements
+### Files & P2P Sharing
+- `POST /api/files/upload` - Upload file chunks to P2P network
+- `GET /api/files/list` - View available shared files
+- `DELETE /api/files/remove` - Remove a shared file from the network
 
-Troubleshooting
-Database Connection Issues
-Verify PostgreSQL server is running
-Check database name, render URL, and credentials
-Session Issues
-Clear browser cookies and local storage
-Check session timeout settings
+## Database Tables
 
-Performance Optimization
-Implement connection pooling (HikariCP)
-Cache frequently accessed static files
-Optimize chunk merging algorithms for large files
+### user_accounts
+- `user_id` (Primary Key, VARCHAR)
+- `display_name` (VARCHAR)
+- `password` (VARCHAR)
+- `admin` (BOOLEAN)
+- `created_at` (TIMESTAMP)
 
-License
+## Security Features
+- Session-based user authentication
+- SQL injection prevention using Spring Data JPA & Prepared Statements
+- Input validation and parameter sanitization
+- Real-time account termination enforcement via polling
+
+## Future Enhancements
+- Password encryption using BCrypt
+- WebRTC integration for direct peer-to-peer browser file transfer
+- Advanced reporting and storage statistics for Admins
+- Mobile application and progressive web app (PWA) support
+- End-to-end encryption for shared files
+
+## Troubleshooting
+
+### Database Connection Issues
+- Verify PostgreSQL server is running
+- Check database name, URL, and credentials in `application.properties`
+- Ensure the PostgreSQL JDBC driver is present in `pom.xml`
+
+### Session Issues
+- Clear browser cookies and local storage
+- Restart the embedded Tomcat / Spring Boot server
+- Verify account status using the status endpoint
+
+### Maven Build Issues
+```bash
+# Force update dependencies
+mvn dependency:resolve -U
+
+# Clean Maven cache and rebuild
+mvn clean install -DskipTests
+```
+
+## Performance Optimization
+- Implement database connection pooling (HikariCP)
+- Cache frequently accessed static files and assets
+- Optimize chunk merging algorithms for large file uploads
+
+## License
 This project is open source and available under the MIT License.
 
-Author
+## Author
 Developed by: Noor Mohammad
 
-Support
+## Support
 For issues and questions, please refer to the documentation or contact support.
 
-Deployment Checklist
- PostgreSQL database configured
- application.properties updated
- pom.xml dependencies resolved
- JAR file built successfully
- Application deployed
- Login functionality verified
- Session management working
+## Deployment Checklist
+- [x] PostgreSQL database created and configured
+- [x] `application.properties` credentials updated
+- [x] `pom.xml` dependencies resolved
+- [x] JAR file built successfully
+- [x] Embedded Tomcat server configured
+- [x] Application deployed and tested
+- [x] Login functionality verified
+- [x] Session management working
